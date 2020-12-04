@@ -1,0 +1,44 @@
+# Copyright 2020 l1b0k
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: download
+  get_url:
+    url: https://dl.google.com/go/go1.15.5.linux-amd64.tar.gz
+    dest: /root/go.tgz
+    checksum: sha256:9a58494e8da722c3aef248c9227b0e9c528c7318309827780f16220998180a0d
+
+- name: install
+  unarchive:
+    src: /root/go.tgz
+    dest: /usr/local
+    remote_src: yes
+
+#- name: install from local
+#  unarchive:
+#    src: bin/go1.15.5.linux-amd64.tar.gz
+#    dest: /usr/local
+
+- name: set go env
+  lineinfile:
+    path: /root/.bash_profile
+    regexp: '^/usr/local/go/bin '
+    insertbefore: '^#export PATH'
+    line: 'export PATH=$PATH:/usr/local/go/bin'
+
+- name: config go env
+  command:
+    cmd: "{{ item }}"
+  loop:
+    - /usr/local/go/bin/go env -w GOPROXY=https://goproxy.io,direct
+    - /usr/local/go/bin/go env -w GOPATH=/root/go
