@@ -18,7 +18,8 @@
       - git
       - wget
       - htop
-      - bridge-utils
+#      - bridge-utils
       - ipvsadm
       - ipset
+      - iperf3
     state: present
